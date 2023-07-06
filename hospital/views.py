@@ -824,9 +824,136 @@ def patient_discharge_view(request):
 def aboutus_view(request):
     return render(request,'hospital/aboutus.html')
 
+
+
+from django.core.mail import send_mail
+from django.conf import settings
+
+def contactus_view(request):
+    if request.method == 'POST':
+        form = forms.ContactusForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            
+            subject = 'New Contact Form Submission'
+            email_message = f'Name: {name}\nEmail: {email}\nMessage: {message}'
+            recipient_list = ['afrakomalydia@example.com']  # Update with your recipient email address
+            
+            send_mail(subject, email_message, settings.EMAIL_HOST_USER, recipient_list)
+            
+            # Optionally, you can redirect to a success page or display a success message
+            return redirect('success')
+    else:
+        form = forms.ContactusForm()
+    
+    context = {
+        'form': form
+    }
+    
+    return render(request, 'hospital/contactus.html', {'form': form})
+
+
+# # from django.core.mail import send_mail
+# # from django.conf import settings
+# # from django.shortcuts import render
+
+# # from . import forms
+
+# # def contactus_view(request):
+# #     form = forms.ContactusForm()
+
+# #     if request.method == 'POST':
+# #         form = forms.ContactusForm(request.POST)
+
+# #         if form.is_valid():
+# #             email = form.cleaned_data['Email']
+# #             name = form.cleaned_data['Name']
+# #             message = form.cleaned_data['Message']
+
+# #             try:
+# #                 send_mail(
+# #                     f'{name} || {email}',
+# #                     message,
+# #                     settings.EMAIL_HOST_USER,
+# #                     settings.EMAIL_RECEIVING_USER,
+# #                     fail_silently=False,
+# #                 )
+# #                 return render(request, 'hospital/contactussuccess.html')
+# #             except Exception as e:
+# #                 error_message = str(e)
+# #                 return render(request, 'hospital/contactus.html', {'form': form, 'error_message': error_message})
+
+# #     return render(request, 'hospital/contactus.html', {'form': form})
+
+
+
+# # #---------------------------------------------------------------------------------
+# # #------------------------ ADMIN RELATED VIEWS END ------------------------------
+# # #---------------------------------------------------------------------------------
+
+
+# # #Authentification
+
+
+# # from google.oauth2 import id_token
+# # from google.auth.transport import requests as google_requests
+
+# # def google_auth(request):
+# #     client_id = 'your-client-id'  # OAuth 2.0 client ID from Step 2
+# #     redirect_uri = 'http://localhost:8000/auth/google/callback'  # Redirect URI from Step 2
+
+# #     auth_url = f'https://accounts.google.com/o/oauth2/auth?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope=https://mail.google.com/'
+
+# #     return redirect(auth_url)
+
+
+# # from google.oauth2 import id_token
+# # from google.auth.transport import requests as google_requests
+# # from django.conf import settings
+
+# # def google_auth_callback(request):
+# #     client_id = 'your-client-id'  # OAuth 2.0 client ID from Step 2
+# #     client_secret = 'your-client-secret'  # OAuth 2.0 client secret from Step 2
+# #     redirect_uri = 'http://localhost:8000/auth/google/callback'  # Redirect URI from Step 2
+
+# #     code = request.GET.get('code', '')
+# #     token_url = 'https://accounts.google.com/o/oauth2/token'
+
+# #     # Exchange the authorization code for an access token
+# #     params = {
+# #         'code': code,
+# #         'client_id': client_id,
+# #         'client_secret': client_secret,
+# #         'redirect_uri': redirect_uri,
+# #         'grant_type': 'authorization_code',
+# #     }
+# #     response = request.post(token_url, data=params)
+
+# #     # Retrieve the access token from the response
+# #     if response.status_code == 200:
+# #         token_data = response.json()
+# #         access_token = token_data.get('access_token', '')
+
+# #         # Use the access token to get the user's email address
+# #         id_info = id_token.verify_oauth2_token(access_token, google_requests.Request(), client_id)
+
+# #         # Update the EMAIL_HOST_USER with the authenticated user's email
+# #         if id_info:
+# #             request.session['access_token'] = access_token
+# #             EMAIL_HOST_USER = id_info['email']
+# #             # Continue with sending the email
+
+# #     # Handle the rest of your logic or redirect the user
+
+
+
+# # views.py
+
 # from django.core.mail import send_mail
 # from django.conf import settings
-# from django.shortcuts import render
+# from django.shortcuts import render, redirect
 
 # from . import forms
 
@@ -857,6 +984,7 @@ def aboutus_view(request):
 #     return render(request, 'hospital/contactus.html', {'form': form})
 
 
+# # google_auth_callback function remains unchanged
 
 # #---------------------------------------------------------------------------------
 # #------------------------ ADMIN RELATED VIEWS END ------------------------------
@@ -865,9 +993,9 @@ def aboutus_view(request):
 
 # #Authentification
 
-
 # from google.oauth2 import id_token
 # from google.auth.transport import requests as google_requests
+# from django.conf import settings
 
 # def google_auth(request):
 #     client_id = 'your-client-id'  # OAuth 2.0 client ID from Step 2
@@ -877,10 +1005,6 @@ def aboutus_view(request):
 
 #     return redirect(auth_url)
 
-
-# from google.oauth2 import id_token
-# from google.auth.transport import requests as google_requests
-# from django.conf import settings
 
 # def google_auth_callback(request):
 #     client_id = 'your-client-id'  # OAuth 2.0 client ID from Step 2
@@ -908,103 +1032,10 @@ def aboutus_view(request):
 #         # Use the access token to get the user's email address
 #         id_info = id_token.verify_oauth2_token(access_token, google_requests.Request(), client_id)
 
-#         # Update the EMAIL_HOST_USER with the authenticated user's email
+#         # Update the session with the authenticated user's email
 #         if id_info:
 #             request.session['access_token'] = access_token
-#             EMAIL_HOST_USER = id_info['email']
-#             # Continue with sending the email
+#             request.session['authenticated_email'] = id_info['email']
 
 #     # Handle the rest of your logic or redirect the user
-
-
-
-# views.py
-
-from django.core.mail import send_mail
-from django.conf import settings
-from django.shortcuts import render, redirect
-
-from . import forms
-
-def contactus_view(request):
-    form = forms.ContactusForm()
-
-    if request.method == 'POST':
-        form = forms.ContactusForm(request.POST)
-
-        if form.is_valid():
-            email = form.cleaned_data['Email']
-            name = form.cleaned_data['Name']
-            message = form.cleaned_data['Message']
-
-            try:
-                send_mail(
-                    f'{name} || {email}',
-                    message,
-                    settings.EMAIL_HOST_USER,
-                    settings.EMAIL_RECEIVING_USER,
-                    fail_silently=False,
-                )
-                return render(request, 'hospital/contactussuccess.html')
-            except Exception as e:
-                error_message = str(e)
-                return render(request, 'hospital/contactus.html', {'form': form, 'error_message': error_message})
-
-    return render(request, 'hospital/contactus.html', {'form': form})
-
-
-# google_auth_callback function remains unchanged
-
-#---------------------------------------------------------------------------------
-#------------------------ ADMIN RELATED VIEWS END ------------------------------
-#---------------------------------------------------------------------------------
-
-
-#Authentification
-
-from google.oauth2 import id_token
-from google.auth.transport import requests as google_requests
-from django.conf import settings
-
-def google_auth(request):
-    client_id = 'your-client-id'  # OAuth 2.0 client ID from Step 2
-    redirect_uri = 'http://localhost:8000/auth/google/callback'  # Redirect URI from Step 2
-
-    auth_url = f'https://accounts.google.com/o/oauth2/auth?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope=https://mail.google.com/'
-
-    return redirect(auth_url)
-
-
-def google_auth_callback(request):
-    client_id = 'your-client-id'  # OAuth 2.0 client ID from Step 2
-    client_secret = 'your-client-secret'  # OAuth 2.0 client secret from Step 2
-    redirect_uri = 'http://localhost:8000/auth/google/callback'  # Redirect URI from Step 2
-
-    code = request.GET.get('code', '')
-    token_url = 'https://accounts.google.com/o/oauth2/token'
-
-    # Exchange the authorization code for an access token
-    params = {
-        'code': code,
-        'client_id': client_id,
-        'client_secret': client_secret,
-        'redirect_uri': redirect_uri,
-        'grant_type': 'authorization_code',
-    }
-    response = request.post(token_url, data=params)
-
-    # Retrieve the access token from the response
-    if response.status_code == 200:
-        token_data = response.json()
-        access_token = token_data.get('access_token', '')
-
-        # Use the access token to get the user's email address
-        id_info = id_token.verify_oauth2_token(access_token, google_requests.Request(), client_id)
-
-        # Update the session with the authenticated user's email
-        if id_info:
-            request.session['access_token'] = access_token
-            request.session['authenticated_email'] = id_info['email']
-
-    # Handle the rest of your logic or redirect the user
 
