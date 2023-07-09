@@ -825,35 +825,77 @@ def aboutus_view(request):
     return render(request,'hospital/aboutus.html')
 
 
-
 from django.core.mail import send_mail
 from django.conf import settings
+from django.shortcuts import render, redirect
+from .forms import ContactusForm
 
 def contactus_view(request):
-    if request.method == 'POST':
-        form = forms.ContactusForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            email = form.cleaned_data['email']
-            message = form.cleaned_data['message']
-            
-            subject = 'New Contact Form Submission'
-            email_message = f'Name: {name}\nEmail: {email}\nMessage: {message}'
-            recipient_list = ['afrakomalydia@example.com']  # Update with your recipient email address
-            
-            send_mail(subject, email_message, settings.EMAIL_HOST_USER, recipient_list)
-            
-            # Optionally, you can redirect to a success page or display a success message
-            return redirect('success')
-    else:
-        form = forms.ContactusForm()
-    
+    form = ContactusForm()
+     
     context = {
         'form': form
     }
     
-    return render(request, 'hospital/contactus.html', {'form': form})
+    return render(request, 'hospital/contactus.html', context)
 
+
+
+
+
+# from django.core.mail import send_mail
+# from django.http import JsonResponse
+# from django.conf import settings
+
+# def email_send_view(request):
+#     if request.method == 'POST':
+#         name = request.POST.get('name')
+#         email = request.POST.get('email')
+#         message = request.POST.get('message')
+        
+#         subject = 'New Contact Form Submission'
+#         email_message = f'Name: {name}\nEmail: {email}\nMessage: {message}'
+#         recipient_list = ['afrakomalydia08@gmail.com']  # Update with your recipient email address
+        
+#         send_mail(subject, email_message, settings.EMAIL_HOST_USER, recipient_list)
+        
+#         # Optionally, you can return a success message
+#         return JsonResponse({'message': 'Email sent successfully'})
+#     else:
+#         return JsonResponse({'message': 'Invalid request'})
+
+
+
+
+# from django.core.mail import send_mail
+# from django.conf import settings
+
+# from django.core.mail import send_mail
+# from django.conf import settings
+# from django.shortcuts import render, redirect
+# from .forms import ContactusForm
+
+# def contactus_view(request):
+#     if request.method == 'POST':
+#         form = ContactusForm(request.POST)
+#         if form.is_valid():
+#             name = form.cleaned_data['name']
+#             email = form.cleaned_data['email']
+#             message = form.cleaned_data['message']
+
+#             subject = 'New Contact Form Submission'
+#             email_message = f'Name: {name}\nEmail: {email}\nMessage: {message}'
+#             recipient_list = [settings.EMAIL_RECEIVING_USER]
+
+#             send_mail(subject, email_message, settings.EMAIL_HOST_USER, recipient_list)
+
+#             # Optionally, you can redirect to a success page or display a success message
+#             return redirect('success')
+#     else:
+#         form = ContactusForm()
+
+#     context = {'form': form}
+#     return render(request, 'hospital/contactus.html', context)
 
 # # from django.core.mail import send_mail
 # # from django.conf import settings

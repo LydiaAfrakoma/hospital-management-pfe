@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('aboutus', views.aboutus_view),
     path('contactus', views.contactus_view),
+    #path('email/send/', views.email_send_view, name='email_send'),
 
 
     path('adminclick', views.adminclick_view),

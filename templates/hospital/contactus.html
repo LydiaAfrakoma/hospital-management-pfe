@@ -6,9 +6,7 @@
 {# Load CSS and JavaScript #}
 {% bootstrap_css %}
 {% bootstrap_javascript %}
-
-{# Display django.contrib.messages as Bootstrap alerts #}
-{% bootstrap_messages %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>  <!-- Include jQuery library -->
 
 <html lang="en" dir="ltr">
 
@@ -45,6 +43,42 @@
       justify-content: space-between;
     }
   </style>
+
+  <script>
+    $(document).ready(function() {
+      // Handle form submission
+      $('#contactForm').submit(function(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+    
+        // Get form data
+        var name = $('#id_name').val();
+        var email = $('#id_email').val();
+        var message = $('#id_message').val();
+    
+        // Send form data to server-side endpoint
+        $.ajax({
+          url: 'http://localhost:3000/send-email', // Replace with your server's URL
+          method: 'POST',
+          contentType: 'application/json',
+          dataType: 'json',
+          data: JSON.stringify({
+            name: name,
+            email: email,
+            message: message
+          }),
+          success: function(response) {
+            $('#message').text('Email sent successfully!');
+            $('#message').removeClass('error-message').addClass('success-message');
+            $('#contactForm')[0].reset(); // Reset the form
+          },
+          error: function() {
+            $('#message').text('Email mail sent successfully.');
+            $('#message').removeClass('success-message').addClass('error-message');
+          }
+        });
+      });
+    });
+  </script>
 </head>
 
 <body>
@@ -55,7 +89,7 @@
   <center>
     <h3 class='alert alert-success'>Send Us Your Valuable Feedback!</h3>
 
-    <form method="POST" class="container">
+    <form id="contactForm" class="container">
       <!-- Very Important csrf Token -->
       {% csrf_token %}
       <div class="form-group">
@@ -67,8 +101,11 @@
         {% endbuttons %}
       </div>
     </form>
+    <div id="message"></div>  <!-- To display the result or status message -->
   </center>
+
   {% include "hospital/footer.html" %}
+
 </body>
 
 </html>
