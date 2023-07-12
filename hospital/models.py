@@ -8,7 +8,13 @@ departments=[('Cardiologist','Cardiologist'),
 ('Emergency Medicine Specialists','Emergency Medicine Specialists'),
 ('Allergists/Immunologists','Allergists/Immunologists'),
 ('Anesthesiologists','Anesthesiologists'),
-('Colon and Rectal Surgeons','Colon and Rectal Surgeons')
+('Colon and Rectal Surgeons','Colon and Rectal Surgeons'),
+('Hematology','Hematology'),
+('Neonatology','Neonatology'),
+('Endocrinology','Endocrinology'),
+('Dermatology','Dermatology'),
+('Medicine','Medicine'),
+('Plastic Surgery','Plastic Surgery')
 ]
 class Doctor(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
